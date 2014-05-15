@@ -57,5 +57,4 @@ server.listen(PORT, function (err) {
   if (err) {
     throw err
   }
-  console.log('Listening on http://localhost:' + PORT)
 })
