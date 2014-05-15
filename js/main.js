@@ -1,5 +1,10 @@
+var lastfm = require('./lastfm')
 var series = require('run-series')
 var youtube = require('./youtube')
+
+lastfm.search('can\'t stop won\'t stop', function (err, results) {
+  console.log(err, results)
+})
 
 // series([
 //   youtube.loadAPI,
