@@ -20,7 +20,7 @@ exports.loadAPI = function (cb) {
   }
 }
 
-exports.getSong = function (title, artist, cb) {
+exports.getVideoId = function (title, artist, cb) {
   title = title || ''
   artist = artist || ''
   var q = title + ' ' + artist
@@ -37,21 +37,13 @@ exports.getSong = function (title, artist, cb) {
 
   util.jsonp(url, params, function (err, data) {
     if (err) return cb(err)
-    var video = data.data.items && data.data.items[0] && data.data.items[0].id
-    if (video) {
-      cb(null, video)
+    var id = data.data.items && data.data.items[0] && data.data.items[0].id
+    if (id) {
+      cb(null, id)
     } else {
-      cb(new Error('no video'))
+      cb(new Error('no youtube video for ' + title + ' ' + artist))
     }
   })
-}
-
-exports.loadPlayer = function (videoId, node) {
-  var player = new Player(videoId, node)
-
-  var div = document.createElement('div')
-  div.innerHTML = '<iframe id="ytplayer" type="text/html" width="640" height="360" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&enablejsapi=1&modestbranding=1&rel=0&showinfo=0&color=white&iv_load_policy=3" frameborder="0" allowfullscreen>'
-  node.appendChild(div)
 }
 
 exports.Player = Player
@@ -62,13 +54,26 @@ function Player (videoId, node) {
   var self = this
   EventEmitter.call(self)
 
-  self._player = new YT.Player(node, {
+  self.yt = new YT.Player(node, {
     height: '390',
     width: '640',
     videoId: videoId,
     events: {
       'onReady': self.emit.bind(self, 'ready'),
       'onStateChange': self.emit.bind(self, 'stateChange')
+    },
+    playerVars: {
+      autoplay: 1,
+      controls: 0,
+      disablekb: 1,
+      enablejsapi: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      modestbranding: 0,
+      origin: undefined, // TODO
+      playsinline: 1,
+      rel: 0,
+      showinfo: 0
     }
   })
 
