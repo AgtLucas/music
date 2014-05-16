@@ -1,3 +1,4 @@
+var $ = require('jquery')
 var lastfm = require('./lastfm')
 var view = require('./view')
 
