@@ -10,9 +10,6 @@ $search.on('keyup', function () {
   }
   lastfm.search(q, function (err, results) {
     if (err) throw err
-    console.log(results)
-    view.showResults({
-      tracks: results.tracks
-    })
+    view.showResults(results)
   })
 })

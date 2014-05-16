@@ -51,7 +51,7 @@ a
   position: fixed
   height: 100%
   width: 100%
-  padding: 100px 15px 15px 15px
+  padding: 100px 30px 15px 30px
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.5)
   z-index: 20
   background: linear-gradient(top, rgba(0,0,0,0.7) 0px, rgba(0,0,0,0) 100px)
@@ -105,25 +105,14 @@ a
 :-ms-input-placeholder
   color: #DDD
 
+h1, h2, h3, h4
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7)
+  line-height: 1.5em
 h1
   font-family: 'Rock Salt', cursive
   font-size: 80px
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7)
-
-.albums
-  border: 1px solid red
-  width: 400px
-  float: right
-  .album
-    height: 150px
-    width: 150px
-
-    img
-      width: 150px
-      height: 150px
-
-    .name
-      color: #FFF
+h2
+  font-size: 40px
 
 #controls
   position: fixed
@@ -152,62 +141,105 @@ h1
       opacity: 0
   .timeline
     width: 100%
-    background-color: rgba(255, 164, 114, 0.5)
+    background-color: rgba(123, 0, 153, 0.4)
   .progress
     width: 0%
-    background-color: rgb(255, 90, 0)
+    background-color: rgb(123, 0, 153)
 
 #results
-  .result
+  max-width: 1440px
+
+.result
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7)
+
+  &:hover
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7)
-    // border: solid red 1px
 
-  .tracks
-    width: 33%
+.tracks, .artists, .albums
+  float: left
+  padding: 0 20px
+  width: 33%
+  .result
+    margin-bottom: 15px
 
-    .result
-      border-radius: 7px
-      background-color: rgba(0, 0, 0, 0.8)
-      height: 70px
-      margin-bottom: 15px
+.tracks .result
+  background-color: rgba(0, 0, 0, 0.7)
+  border-radius: 5px
+  height: 70px
+  .left
+    display: inline-block
+    border-top-left-radius: 5px
+    border-bottom-left-radius: 5px
+    background-color: rgb(123, 0, 153)
+    float: left
+    height: 70px
+    width: 70px
+  .playBtn
+    height: 56px
+    width: 56px
+    border-radius: 28px
+    border: 3px solid #FFF
+    margin: 7px
+    .arrow
+      width: 0
+      height: 0
+      border-top: 15px solid transparent
+      border-bottom: 15px solid transparent
+      border-left: 26px solid #FFF
+      margin: 10px 0 0 16px
+  .right
+    display: inline-block
+    padding: 10px 15px
+    overflow: hidden
+  .name, .artist
+    line-height: 1.5em
+  .name
+    ellipsis()
+    width: 100%
+    font-size: 21px
+  .artist
+    color: #AAA
+    font-size: 13px
 
-      .left
-        display: inline-block
-        border-top-left-radius: 7px
-        border-bottom-left-radius: 7px
-        background-color: rgb(255, 90, 0)
-        float: left
-        height: 70px
-        width: 70px
+.artists .result
+  height: 300px
+  text-align: center
+  border-radius: 10px
 
-      .playBtn
-        height: 56px
-        width: 56px
-        border-radius: 28px
-        border: 2px solid #FFF
-        margin: 7px
+  .gradient
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 30%)
+    border-radius: 10px
+    height: 100%
+    width: 100%
+    padding: 10px 15px
+    background-size: cover
 
-        .arrow
-          width: 0
-          height: 0
-          border-top: 15px solid transparent
-          border-bottom: 15px solid transparent
+  .name
+    font-size: 21px
+    line-height: 1.5em
 
-          border-left: 26px solid #FFF
-          margin: 11px 0 0 16px
 
-      .right
-        display: inline-block
-        padding: 10px 15px
-        overflow: hidden
+.albums .result
+  width: 180px
+  height: 180px
+  border-radius: 5px
+  float: left
+  text-align: center
+  margin-right: 15px
 
-      .name, .artist
-        line-height: 1.5em
-      .name
-        ellipsis()
-        width: 100%
-        font-size: 21px
+  .gradient
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 30%)
+    border-radius: 5px
+    height: 100%
+    width: 100%
+    padding: 10px 15px
+    background-size: cover
 
-      .artist
-        color: #AAA
-        font-size: 13px
+  .name
+    font-size: 16px
+    line-height: 1.5em
+
+  .artist
+    color: #AAA
+    font-size: 12px
+

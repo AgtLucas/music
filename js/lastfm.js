@@ -2,8 +2,6 @@ var extend = require('extend.js')
 var parallel = require('run-parallel')
 var util = require('./util')
 
-var LIMIT = 5
-
 var api = new LastFM({
   apiKey: '414cf82dc17438b8c880f237a13e5c09',
   cache: new LastFMCache()
@@ -92,7 +90,7 @@ exports.searchMerged = function (q, cb) {
 }
 
 exports.trackSearch = function (q, cb) {
-  api.track.search({ track: q.trim(), limit: LIMIT }, {
+  api.track.search({ track: q.trim(), limit: 10 }, {
     success: function (data) {
       var tracks = data && data.results && data.results.trackmatches && data.results.trackmatches.track
 
@@ -119,7 +117,7 @@ exports.trackSearch = function (q, cb) {
 }
 
 exports.artistSearch = function (q, cb) {
-  api.artist.search({ artist: q.trim(), limit: LIMIT }, {
+  api.artist.search({ artist: q.trim(), limit: 5 }, {
     success: function (data) {
       var artists = data && data.results && data.results.artistmatches && data.results.artistmatches.artist
 
@@ -133,7 +131,7 @@ exports.artistSearch = function (q, cb) {
       artists = artists.map(function (artist) {
         return {
           name: artist.name,
-          image: artist.image && artist.image[artist.image.length - 1],
+          image: artist.image && artist.image[artist.image.length - 1]['#text'],
           listeners: Number(artist.listeners) || 0,
           type: 'artist'
         }
@@ -145,7 +143,7 @@ exports.artistSearch = function (q, cb) {
 }
 
 exports.albumSearch = function (q, cb) {
-  api.album.search({ album: q.trim(), limit: LIMIT }, {
+  api.album.search({ album: q.trim(), limit: 10 }, {
     success: function (data) {
       var albums = data && data.results && data.results.albummatches && data.results.albummatches.album
 
@@ -160,7 +158,7 @@ exports.albumSearch = function (q, cb) {
         return {
           name: album.name,
           artist: album.artist,
-          image: album.image && album.image[album.image.length - 1],
+          image: album.image && album.image[album.image.length - 1]['#text'],
           type: 'album'
         }
       })
