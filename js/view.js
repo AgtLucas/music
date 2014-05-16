@@ -30,6 +30,7 @@ function cueVideo (id) {
   if (player === undefined) {
     player = new youtube.Player(id, document.querySelector('#player'))
   } else {
+    player.yt.cueVideoById(id)
     player.yt.playVideo()
   }
 }

@@ -6,7 +6,6 @@ require('./search')
 var parallel = require('run-parallel')
 var domready = require('domready')
 var lastfm = require('./lastfm')
-var url = require('url')
 var view = require('./view')
 var youtube = require('./youtube')
 
@@ -17,7 +16,13 @@ domready(onReady)
 function onReady () {
   parallel({
     api: youtube.loadAPI,
-    info: getInfoFromLocation
+    info: function (cb) {
+      var parsed = parseUrl(window.location.pathname)
+      getInfo(parsed.type, parsed.q, function (err, info) {
+        if (err) throw err
+        show(info)
+      })
+    }
   }, function (err, r) {
     if (err) throw err
     show(r.info)
@@ -34,18 +39,18 @@ function show (info) {
   }
 }
 
-function getInfoFromLocation (cb) {
-  var loc = url.parse(window.location.href)
-  var re = loc.path.match(TYPE_RE)
+function parseUrl (href) {
+  var re = href.match(TYPE_RE)
   var type = re && re[1]
   if (type && type === 'track' || type === 'artist' || type === 'album') {
-    // load item
     var q = re && re[2]
     q = decodeURIComponent(q.replace(/-/g, ' '))
-    getInfo(type, q, cb)
+    return {
+      type: type,
+      q: q
+    }
   } else {
-    // load homepage
-
+    return null
   }
 }
 
@@ -66,3 +71,16 @@ function getInfo (type, q, cb) {
     cb(new Error('unrecognized type ' + type))
   }
 }
+
+$(document).on('click', 'a', function (evt) {
+  var href = $(this).attr('href')
+  var parsed = parseUrl(href)
+  if (parsed.type === 'track') {
+    player.yt.pauseVideo()
+  }
+  getInfo(parsed.type, parsed.q, function (err, info) {
+    if (err) throw err
+    show(info)
+  })
+  evt.preventDefault()
+})
