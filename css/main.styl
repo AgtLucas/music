@@ -116,7 +116,9 @@ h1
   font-size: 60px
 h2
   font-family: 'Oswald', sans-serif
-  font-size: 36px
+  font-size: 30px
+  text-decoration: underline
+  margin-bottom: 10px
 
 #controls
   position: fixed
@@ -174,22 +176,22 @@ h2
 
   .playBtn
     float: left
-    background-color: rgb(123, 0, 153)
-    height: 56px
-    width: 56px
-    border-radius: 28px
-    border: 3px solid #FFF
-    margin: 7px
+    background-color: rgba(123, 0, 153, 0.7)
+    height: 52px
+    width: 52px
+    border-radius: 26px
+    border: 2px solid rgba(255, 255, 255, 1)
+    margin: 9px 12px
     .arrow
       width: 0
       height: 0
-      border-top: 15px solid transparent
-      border-bottom: 15px solid transparent
-      border-left: 26px solid #FFF
-      margin: 10px 0 0 16px
+      border-top: 14px solid transparent
+      border-bottom: 14px solid transparent
+      border-left: 22px solid #FFF
+      margin: 10px 0 0 17px
   .right
     float: left
-    padding: 10px 5px
+    padding: 10px 0
     overflow: hidden
   .name, .artist
     line-height: 1.5em
@@ -202,9 +204,10 @@ h2
     font-size: 13px
 
 .artists .result
-  height: 300px
+  height: 580px
   text-align: center
   border-radius: 10px
+  background-size: cover
 
   .gradient
     background-image: linear-gradient(top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 30%)

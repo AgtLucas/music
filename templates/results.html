@@ -1,4 +1,14 @@
 <div id="results">
+  <div class="artists">
+    <h2>Artist</h2>
+    {{#artists}}
+      <a class="result" href="{{ url }}" style="background-image: url({{ image }})">
+        <div class="gradient">
+          <div class="name">{{ name }}</div>
+        </div>
+      </a>
+    {{/artists}}
+  </div>
   <div class="tracks">
     <h2>Tracks</h2>
     {{#tracks}}
@@ -12,16 +22,6 @@
         </div>
       </a>
     {{/tracks}}
-  </div>
-  <div class="artists">
-    <h2>Artists</h2>
-    {{#artists}}
-      <a class="result" href="{{ url }}" style="background-image: url({{ image }})">
-        <div class="gradient">
-          <div class="name">{{ name }}</div>
-        </div>
-      </a>
-    {{/artists}}
   </div>
   <div class="albums">
     <h2>Albums</h2>

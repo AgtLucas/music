@@ -96,7 +96,7 @@ exports.trackSearch = function (track, artist, cb) {
   }
   track = track.trim()
   artist = artist.trim()
-  api.track.search({ track: track, artist: artist, limit: 10 }, {
+  api.track.search({ track: track, artist: artist, limit: 7 }, {
     success: function (data) {
       var tracks = data && data.results && data.results.trackmatches && data.results.trackmatches.track
 
@@ -123,7 +123,7 @@ exports.trackSearch = function (track, artist, cb) {
 }
 
 exports.artistSearch = function (q, cb) {
-  api.artist.search({ artist: q.trim(), limit: 5 }, {
+  api.artist.search({ artist: q.trim(), limit: 1 }, {
     success: function (data) {
       var artists = data && data.results && data.results.artistmatches && data.results.artistmatches.artist
 
@@ -149,7 +149,7 @@ exports.artistSearch = function (q, cb) {
 }
 
 exports.albumSearch = function (q, cb) {
-  api.album.search({ album: q.trim(), limit: 10 }, {
+  api.album.search({ album: q.trim(), limit: 6 }, {
     success: function (data) {
       var albums = data && data.results && data.results.albummatches && data.results.albummatches.album
 
