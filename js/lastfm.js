@@ -31,15 +31,7 @@ exports.search = function (q, cb) {
     tracks: function (cb) { exports.trackSearch(q, cb) },
     artists: function (cb) { exports.artistSearch(q, cb) },
     albums: function (cb) { exports.albumSearch(q, cb) }
-  }, function (err, r) {
-    if (err) return cb(err)
-    Object.keys(r).forEach(function (type) {
-      r[type].forEach(function (item) {
-        item.url = toUrl(item)
-      })
-    })
-    cb(null, r)
-  })
+  }, cb)
 }
 
 exports.searchMerged = function (q, cb) {
@@ -50,12 +42,6 @@ exports.searchMerged = function (q, cb) {
     albums: function (cb) { exports.albumSearch(q, cb) }
   }, function (err, r) {
     if (err) return cb(err)
-
-    Object.keys(r).forEach(function (type) {
-      r[type] = r[type].map(function (item) {
-        item.url = toUrl(item)
-      })
-    })
 
     var results = []
 
@@ -108,13 +94,15 @@ exports.trackSearch = function (track, artist, cb) {
       }
 
       tracks = tracks.map(function (track) {
-        return {
+        track = {
           name: track.name,
           artist: track.artist,
           image: track.image && track.image[track.image.length - 1],
           listeners: Number(track.listeners) || 0,
-          type: 'track'
+          type: 'track',
         }
+        track.url = toUrl(track)
+        return track
       })
       cb(null, tracks)
     },
@@ -135,12 +123,14 @@ exports.artistSearch = function (q, cb) {
       }
 
       artists = artists.map(function (artist) {
-        return {
+        artist = {
           name: artist.name,
           image: artist.image && artist.image[artist.image.length - 1]['#text'],
           listeners: Number(artist.listeners) || 0,
           type: 'artist'
         }
+        artist.url = toUrl(artist)
+        return artist
       })
       cb(null, artists)
     },
@@ -161,12 +151,14 @@ exports.albumSearch = function (q, cb) {
       }
 
       albums = albums.map(function (album) {
-        return {
+        album = {
           name: album.name,
           artist: album.artist,
           image: album.image && album.image[album.image.length - 1]['#text'],
           type: 'album'
         }
+        album.url = toUrl(album)
+        return album
       })
       cb(null, albums)
     },

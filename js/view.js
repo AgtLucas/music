@@ -64,6 +64,10 @@ exports.renderResults = function (results) {
   render(RESULTS, results)
 }
 
+exports.clearView = function () {
+  view.innerHTML = ''
+}
+
 var $document = $(document)
 var $body = $('body')
 var inactiveTimeout

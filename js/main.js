@@ -48,7 +48,7 @@ function parseUrl (href) {
   }
 }
 
-function show (info, cb) {
+function show (info) {
 
   function renderFirst (err, items) {
     if (err) {
@@ -65,6 +65,9 @@ function show (info, cb) {
     } else if (item.type === 'album') {
       view.renderAlbum(item)
     }
+
+    history.pushState({}, '', item.url)
+
   }
 
   if (info.type === 'track') {
@@ -74,11 +77,12 @@ function show (info, cb) {
   } else if (info.type === 'album') {
     lastfm.albumSearch(info.name, info.artist, renderFirst)
   } else {
-    cb(new Error('unrecognized type ' + info.type))
+    throw new Error('unrecognized type ' + info.type)
   }
 }
 
 $(document).on('click', 'a', function (evt) {
+  view.clearView()
   var href = $(this).attr('href')
   var parsed = parseUrl(href)
   if (parsed.type === 'track') {
