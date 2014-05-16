@@ -43,6 +43,21 @@ a
   color: #FFF
   text-decoration: none
 
+#logo
+  position: fixed
+  bottom: 50px
+  right: 15px
+  width: 100px
+  height: 34px
+  background-image: url('/img/logo.png')
+  z-index: 100
+  background-size: 100px 34px
+  transition: bottom 0.15s linear
+
+  .inactive &
+    bottom: 25px
+
+
 #player
   position: fixed
   height: 100%
@@ -110,8 +125,6 @@ a
 
     &:hover
       opacity: 1
-
-
 
   input
     display: block
