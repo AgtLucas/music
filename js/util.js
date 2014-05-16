@@ -1,6 +1,7 @@
 var querystring = require('querystring')
 var once = require('once')
 var util = require('./util')
+var htmlParser = require('html-parser')
 
 var JSONP_TIMEOUT = 10000
 
@@ -60,4 +61,30 @@ exports.jsonp = function (uri, params, cb) {
     document.body.appendChild(script);
 
     return cancel;
-};
+}
+
+/**
+ * Sanitize dirty (user-provided) HTML to remove bad html tags. Uses a
+ * whitelist approach, where only the tags we explicitly allow are kept.
+ *
+ * @param  {String} html                dirty HTML
+ * @param  {Array=} elementsWhitelist   elements to keep
+ * @param  {Array=} attributesWhitelist attributes to keep
+ * @return {String}                     sanitized HTML
+ */
+exports.sanitizeHTML = function (html, elementsWhitelist, attributesWhitelist) {
+  elementsWhitelist = elementsWhitelist || []
+  attributesWhitelist = attributesWhitelist || []
+
+  var sanitized = htmlParser.sanitize(html, {
+    elements: function (name) {
+      return elementsWhitelist.indexOf(name) === -1
+    },
+    attributes: function (name) {
+      return attributesWhitelist.indexOf(name) === -1
+    },
+    comments: true,
+    doctype: true
+  })
+  return sanitized
+}

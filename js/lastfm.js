@@ -1,5 +1,6 @@
 var extend = require('extend.js')
 var parallel = require('run-parallel')
+var util = require('./util')
 
 var LIMIT = 10
 
@@ -10,6 +11,10 @@ var api = new LastFM({
 
 function onError (code, message) {
   cb(new Error('LastFM error ' + code + ': ' + message))
+}
+
+function trim (text) {
+  return text.replace(/\s*\.\s*User-contributed text is available under the Creative Commons By-SA License and may also be available under the GNU FDL\./, '').trim()
 }
 
 exports.search = function (q, cb) {
@@ -120,23 +125,22 @@ exports.albumSearch = function (q, cb) {
   })
 }
 
-exports.artistInfo = function (artist, cb) {
-  artist = extend({}, artist)
+exports.artistInfo = function (name, cb) {
   parallel({
     info: function (cb) {
-      api.artist.getInfo({ artist: artist.name, autocorrect: 1, limit: 1 }, {
+      api.artist.getInfo({ artist: name, autocorrect: 1, limit: 1 }, {
         success: cb.bind(undefined, null),
         error: onError
       })
     },
     tracks: function (cb) {
-      api.artist.getTopTracks({ artist: artist.name, autocorrect: 1 }, {
+      api.artist.getTopTracks({ artist: name, autocorrect: 1 }, {
         success: cb.bind(undefined, null),
         error: onError
       })
     },
     albums: function (cb) {
-      api.artist.getTopAlbums({ artist: this.name, autocorrect: 1, limit: 6 }, {
+      api.artist.getTopAlbums({ artist: name, autocorrect: 1 }, {
         success: cb.bind(undefined, null),
         error: onError
       })
@@ -144,16 +148,22 @@ exports.artistInfo = function (artist, cb) {
   }, function (err, r) {
     if (err) return cb(err)
     var info = r.info && r.info.artist
-    var tracks = r.tracks && r.tracks.toptracks
-    var albums = r.albums && r.albums.topalbums
+    var tracks = r.tracks && r.tracks.toptracks && r.tracks.toptracks.track
+    var albums = r.albums && r.albums.topalbums && r.albums.topalbums.album
 
-    artist.bio = info.bio && info.bio.summary
-    artist.bioLong = info.bio && info.bio.content
-    artist.image = info.image[info.image.length - 1]['#text']
-    artist.tracks = tracks
-    artist.albums = albums
+    var artist = {
+      name: info.name,
+      listeners: info.stats.listeners,
+      bio: trim(util.sanitizeHTML(info.bio && info.bio.summary)),
+      bioLong: trim(util.sanitizeHTML(info.bio && info.bio.content)),
+      image: info.image[info.image.length - 1]['#text'],
+      tracks: tracks,
+      albums: albums,
+      type: 'artist'
+    }
 
     cb(null, artist)
   })
-
 }
+
+exports.albumInfo = function (album) {}

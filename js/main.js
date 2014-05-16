@@ -5,6 +5,7 @@ var parallel = require('run-parallel')
 var domready = require('domready')
 var lastfm = require('./lastfm')
 var url = require('url')
+var view = require('./view')
 var youtube = require('./youtube')
 
 var TYPE_RE = /^\/([^\/]+)\/([^\/]+)\/?/i
@@ -21,13 +22,13 @@ function onReady () {
   })
 }
 
-function show () {
+function show (info) {
   if (info.type === 'track') {
-    showTrack(info)
+    view.showTrack(info)
   } else if (info.type === 'artist') {
-    showArtist(info)
+    view.showArtist(info.name)
   } else if (info.type === 'album') {
-    showAlbum(info)
+    view.showAlbum(info)
   }
 }
 

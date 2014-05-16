@@ -7,6 +7,7 @@
     "domready": "^1.0.5",
     "express": "^4.2.0",
     "extend.js": "0.0.1",
+    "html-parser": "^0.7.2",
     "inherits": "^2.0.1",
     "jade": "^1.3.1",
     "jquery": "^2.1.1",
@@ -29,9 +30,9 @@
     "start": "node index.js",
     "build": "npm run build-css && npm run build-js",
     "build-css": "stylus -u nib css/main.styl -o static/ -c",
-    "build-js": "browserify -t brfs --debug js/main.js > static/bundle.js",
+    "build-js": "browserify js/main.js -t brfs --debug > static/bundle.js",
     "watch": "npm run watch-css & npm run watch-js & nodemon index.js -e js,jade -i node_modules/ -q",
     "watch-css": "stylus -u nib css/main.styl -o static/ -w",
-    "watch-js": "watchify js/main.js -o static/bundle.js -dv"
+    "watch-js": "watchify js/main.js -t brfs -o static/bundle.js -dv"
   }
 }
