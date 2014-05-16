@@ -9,7 +9,7 @@ var lastfm = require('./lastfm')
 var view = require('./view')
 var youtube = require('./youtube')
 
-var TYPE_RE = /^\/([^\/]+)\/([^\/]+)\/?/i
+var TYPE_RE = /^\/([^\/]+)(?:\/([^\/]+))?(?:\/([^\/]+))?\/?/i
 
 domready(onReady)
 
@@ -18,10 +18,7 @@ function onReady () {
     api: youtube.loadAPI,
     info: function (cb) {
       var parsed = parseUrl(window.location.pathname)
-      getInfo(parsed.type, parsed.q, function (err, info) {
-        if (err) throw err
-        show(info)
-      })
+      show(parsed)
     }
   }, function (err, r) {
     if (err) throw err
@@ -29,46 +26,55 @@ function onReady () {
   })
 }
 
-function show (info) {
-  if (info.type === 'track') {
-    view.showTrack(info)
-  } else if (info.type === 'artist') {
-    view.showArtist(info.name)
-  } else if (info.type === 'album') {
-    view.showAlbum(info)
-  }
-}
-
 function parseUrl (href) {
   var re = href.match(TYPE_RE)
   var type = re && re[1]
-  if (type && type === 'track' || type === 'artist' || type === 'album') {
-    var q = re && re[2]
-    q = decodeURIComponent(q.replace(/-/g, ' '))
+  var name = decodeURIComponent((re && re[2]).replace(/-/g, ' '))
+
+  if (type && type === 'track' || type === 'album') {
+    var artist = decodeURIComponent((re && re[3]).replace(/-/g, ' '))
     return {
       type: type,
-      q: q
+      name: name,
+      artist: artist
+    }
+  } else if (type && type === 'artist') {
+    return {
+      type: type,
+      name: name
     }
   } else {
     return null
   }
 }
 
-function getInfo (type, q, cb) {
-  if (type === 'track') {
-    lastfm.trackSearch(q, function (err, infos) {
-      cb(err, infos && infos[0])
-    })
-  } else if (type === 'artist') {
-    lastfm.artistSearch(q, function (err, artists) {
-      cb(err, artists && artists[0])
-    })
-  } else if (type === 'album') {
-    lastfm.albumSearch(q, function (err, albums) {
-      cb(err, albums && tracks[0])
-    })
+function show (info, cb) {
+
+  function renderFirst (err, items) {
+    if (err) {
+      alert(err.message)
+    }
+    var item = items && items[0]
+    if (!item) {
+      alert('no item found')
+    }
+    if (item.type === 'track') {
+      view.renderTrack(item)
+    } else if (item.type === 'artist') {
+      view.renderArtist(item.name)
+    } else if (item.type === 'album') {
+      view.renderAlbum(item)
+    }
+  }
+
+  if (info.type === 'track') {
+    lastfm.trackSearch(info.name, info.artist, renderFirst)
+  } else if (info.type === 'artist') {
+    lastfm.artistSearch(info.name, renderFirst)
+  } else if (info.type === 'album') {
+    lastfm.albumSearch(info.name, info.artist, renderFirst)
   } else {
-    cb(new Error('unrecognized type ' + type))
+    cb(new Error('unrecognized type ' + info.type))
   }
 }
 
@@ -78,9 +84,6 @@ $(document).on('click', 'a', function (evt) {
   if (parsed.type === 'track') {
     player.yt.pauseVideo()
   }
-  getInfo(parsed.type, parsed.q, function (err, info) {
-    if (err) throw err
-    show(info)
-  })
+  show(parsed)
   evt.preventDefault()
 })

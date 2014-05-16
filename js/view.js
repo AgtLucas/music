@@ -35,7 +35,7 @@ function cueVideo (id) {
   }
 }
 
-exports.showTrack = function (info) {
+exports.renderTrack = function (info) {
   if (info.type !== 'track') throw new Error('not a track')
   youtube.getVideoId(info.name, info.artist, function (err, id) {
     if (err) return onError(err)
@@ -46,20 +46,21 @@ exports.showTrack = function (info) {
   })
 }
 
-exports.showArtist = function (name) {
+exports.renderArtist = function (name) {
   lastfm.artistInfo(name, function (err, artist) {
     if (err) return onError(err)
+    if (!artist.image)
     render(ARTIST, artist)
     updateBackground(artist.image)
   })
 }
 
-exports.showAlbum = function (info) {
+exports.renderAlbum = function (info) {
   if (info.type !== 'album') throw new Error('not an album')
 
 }
 
-exports.showResults = function (results) {
+exports.renderResults = function (results) {
   render(RESULTS, results)
 }
 

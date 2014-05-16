@@ -89,8 +89,14 @@ exports.searchMerged = function (q, cb) {
   })
 }
 
-exports.trackSearch = function (q, cb) {
-  api.track.search({ track: q.trim(), limit: 10 }, {
+exports.trackSearch = function (track, artist, cb) {
+  if (typeof artist === 'function') {
+    cb = artist
+    artist = ''
+  }
+  track = track.trim()
+  artist = artist.trim()
+  api.track.search({ track: track, artist: artist, limit: 10 }, {
     success: function (data) {
       var tracks = data && data.results && data.results.trackmatches && data.results.trackmatches.track
 
