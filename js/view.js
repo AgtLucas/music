@@ -2,7 +2,10 @@ var $ = require('jquery')
 var fs = require('fs')
 var lastfm = require('./lastfm')
 var mustache = require('mustache')
+var throttle = require('lodash.throttle')
 var youtube = require('./youtube')
+
+window.player = undefined
 
 // Templates
 var ARTIST = fs.readFileSync(__dirname + '/../templates/artist.html', 'utf8')
@@ -21,7 +24,6 @@ function updateBackground (src) {
   })
 }
 
-var player
 function cueVideo (id) {
   if (player === undefined) {
     player = new youtube.Player(id, document.querySelector('#player'))
@@ -53,3 +55,23 @@ exports.showAlbum = function (info) {
   if (info.type !== 'album') throw new Error('not an album')
 
 }
+
+var $document = $(document)
+var $body = $('body')
+var inactiveTimeout
+function onInactive () {
+  if (inactiveTimeout) {
+    clearTimeout(inactiveTimeout)
+    inactiveTimeout = null
+  }
+  $body.addClass('inactive')
+}
+
+$document.on('mousemove', throttle(function () {
+  if (inactiveTimeout) {
+    clearTimeout(inactiveTimeout)
+  } else {
+    $body.removeClass('inactive')
+  }
+  inactiveTimeout = setTimeout(onInactive, 3000)
+}, 500, { leading: true, trailing: true }))

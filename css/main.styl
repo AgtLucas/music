@@ -13,6 +13,14 @@ ellipsis()
 .clearfix:after
   clear: both
 
+user-select()
+  -webkit-touch-callout: arguments;
+  -webkit-user-select: arguments;
+  -khtml-user-select: arguments;
+  -moz-user-select: arguments;
+  -ms-user-select: arguments;
+  user-select: arguments;
+
 *
   box-sizing: border-box
 
@@ -28,18 +36,17 @@ a
 
 #player
   position: fixed
-  margin-top: -5%
+  margin-top: -7%
   height: 120%
   width: 100%
 
 #view
   position: fixed
-  height: 100%
   width: 100%
   padding-top: 100px
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.5)
   z-index: 20
-  background: linear-gradient(top, rgba(0,0,0,0.8) 0px, rgba(0,0,0,0) 100px)
+  background: linear-gradient(top, rgba(0,0,0,0.7) 0px, rgba(0,0,0,0) 100px)
 
 #blur
   position: fixed
@@ -65,7 +72,7 @@ a
   height: 100px
   width: 100%
   margin-top: 15px
-  z-index: 30
+  z-index: 100
 
 #search
   display: block
@@ -96,6 +103,7 @@ h1
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7)
 
 .albums
+  border: 1px solid red
   width: 400px
   float: right
   .album
@@ -108,3 +116,28 @@ h1
 
     .name
       color: #FFF
+
+#controls
+  position: fixed
+  height: 35px
+  width: 100%
+  bottom: 0
+  z-index: 100
+
+  cursor: pointer
+  user-select(none)
+
+  .timeline, .progress
+    float: left
+    height: 35px
+
+  .time
+    left: 0
+    font-size: 18px
+    margin: 7px 12px
+  .timeline
+    width: 100%
+    background-color: rgba(255, 164, 114, 0.5)
+  .progress
+    width: 0%
+    background-color: #ff5a00

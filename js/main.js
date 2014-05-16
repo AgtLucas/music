@@ -1,4 +1,4 @@
-window.jQuery = require('jquery')
+var $ = window.jQuery = require('jquery')
 require('velocity-animate')
 
 var parallel = require('run-parallel')
