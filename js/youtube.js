@@ -81,6 +81,10 @@ function Player (videoId, node) {
     }
   })
 
+  self.on('ready', function () {
+    self.yt.setVolume(100)
+  })
+
   self.on('stateChange', function (data) {
     var state = data.data
     if (state === YT.PlayerState.ENDED) {

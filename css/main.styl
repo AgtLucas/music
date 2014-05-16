@@ -31,17 +31,23 @@ html, body
   height: 100%
   overflow: hidden
   width: 100%
+
+body.inactive
+  cursor: none
+
 a
   color: #00B7FF
 
 #player
   position: fixed
-  margin-top: -7%
-  height: 120%
+  margin-top: -10%
+  height: 130%
   width: 100%
+  z-index: 10
 
 #view
   position: fixed
+  height: 100%
   width: 100%
   padding-top: 100px
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.5)
@@ -119,7 +125,6 @@ h1
 
 #controls
   position: fixed
-  height: 35px
   width: 100%
   bottom: 0
   z-index: 100
@@ -130,11 +135,19 @@ h1
   .timeline, .progress
     float: left
     height: 35px
+    transition: height 0.15s linear
+
+    .inactive &
+      height: 10px
 
   .time
     left: 0
+    opacity: 1
     font-size: 18px
     margin: 7px 12px
+    transition: opacity 0.15s linear
+    .inactive &
+      opacity: 0
   .timeline
     width: 100%
     background-color: rgba(255, 164, 114, 0.5)

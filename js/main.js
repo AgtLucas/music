@@ -1,5 +1,6 @@
 var $ = window.jQuery = require('jquery')
 require('velocity-animate')
+var key = require('keymaster')
 
 var parallel = require('run-parallel')
 var domready = require('domready')
@@ -64,3 +65,12 @@ function getInfo (type, q, cb) {
     cb(new Error('unrecognized type ' + type))
   }
 }
+
+key('space', function () {
+  var state = player.yt.getPlayerState()
+  if (state === YT.PlayerState.PLAYING) {
+    player.yt.pauseVideo()
+  } else if (state === YT.PlayerState.PAUSED) {
+    player.yt.playVideo()
+  }
+})
