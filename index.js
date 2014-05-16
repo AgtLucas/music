@@ -51,7 +51,11 @@ app.use(function (req, res, next) {
 
 app.use(express.static(__dirname + '/static'))
 
-require('./routes')(app)
+app.get('*', function (req, res) {
+  res.render('index', {
+    title: 'Music'
+  })
+})
 
 server.listen(PORT, function (err) {
   if (err) {

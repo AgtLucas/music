@@ -1,3 +1,4 @@
+var extend = require('extend.js')
 var parallel = require('run-parallel')
 
 var LIMIT = 10
@@ -117,4 +118,42 @@ exports.albumSearch = function (q, cb) {
     },
     error: onError
   })
+}
+
+exports.artistInfo = function (artist, cb) {
+  artist = extend({}, artist)
+  parallel({
+    info: function (cb) {
+      api.artist.getInfo({ artist: artist.name, autocorrect: 1, limit: 1 }, {
+        success: cb.bind(undefined, null),
+        error: onError
+      })
+    },
+    tracks: function (cb) {
+      api.artist.getTopTracks({ artist: artist.name, autocorrect: 1 }, {
+        success: cb.bind(undefined, null),
+        error: onError
+      })
+    },
+    albums: function (cb) {
+      api.artist.getTopAlbums({ artist: this.name, autocorrect: 1, limit: 6 }, {
+        success: cb.bind(undefined, null),
+        error: onError
+      })
+    }
+  }, function (err, r) {
+    if (err) return cb(err)
+    var info = r.info && r.info.artist
+    var tracks = r.tracks && r.tracks.toptracks
+    var albums = r.albums && r.albums.topalbums
+
+    artist.bio = info.bio && info.bio.summary
+    artist.bioLong = info.bio && info.bio.content
+    artist.image = info.image[info.image.length - 1]['#text']
+    artist.tracks = tracks
+    artist.albums = albums
+
+    cb(null, artist)
+  })
+
 }
