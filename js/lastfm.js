@@ -2,19 +2,29 @@ var extend = require('extend.js')
 var parallel = require('run-parallel')
 var util = require('./util')
 
-var LIMIT = 10
+var LIMIT = 5
 
 var api = new LastFM({
   apiKey: '414cf82dc17438b8c880f237a13e5c09',
   cache: new LastFMCache()
 })
 
-function onError (code, message) {
-  cb(new Error('LastFM error ' + code + ': ' + message))
+function onError (cb) {
+  return function (code, message) {
+    cb(new Error('LastFM error ' + code + ': ' + message))
+  }
 }
 
 function trim (text) {
   return text.replace(/\s*\.\s*User-contributed text is available under the Creative Commons By-SA License and may also be available under the GNU FDL\./, '').trim()
+}
+
+function toUrl (item) {
+  function clean (s) {
+    return encodeURIComponent(s.replace(/ /g, '-'))
+  }
+
+  return '/' + item.type + '/' + clean(item.name) + (item.artist ? '/' + clean(item.artist) : '')
 }
 
 exports.search = function (q, cb) {
@@ -25,6 +35,29 @@ exports.search = function (q, cb) {
     albums: function (cb) { exports.albumSearch(q, cb) }
   }, function (err, r) {
     if (err) return cb(err)
+    Object.keys(r).forEach(function (type) {
+      r[type].forEach(function (item) {
+        item.url = toUrl(item)
+      })
+    })
+    cb(null, r)
+  })
+}
+
+exports.searchMerged = function (q, cb) {
+  q = q.trim()
+  parallel({
+    tracks: function (cb) { exports.trackSearch(q, cb) },
+    artists: function (cb) { exports.artistSearch(q, cb) },
+    albums: function (cb) { exports.albumSearch(q, cb) }
+  }, function (err, r) {
+    if (err) return cb(err)
+
+    Object.keys(r).forEach(function (type) {
+      r[type] = r[type].map(function (item) {
+        item.url = toUrl(item)
+      })
+    })
 
     var results = []
 
@@ -62,22 +95,26 @@ exports.trackSearch = function (q, cb) {
   api.track.search({ track: q.trim(), limit: LIMIT }, {
     success: function (data) {
       var tracks = data && data.results && data.results.trackmatches && data.results.trackmatches.track
-      if (tracks) {
-        tracks = tracks.map(function (track) {
-          return {
-            name: track.name,
-            artist: track.artist,
-            image: track.image && track.image[track.image.length - 1],
-            listeners: Number(track.listeners) || 0,
-            type: 'track'
-          }
-        })
-        cb(null, tracks)
-      } else {
-        cb(new Error('no tracks'))
+
+      if (!tracks) {
+        tracks = []
       }
+      if (!Array.isArray(tracks)) {
+        tracks = [tracks]
+      }
+
+      tracks = tracks.map(function (track) {
+        return {
+          name: track.name,
+          artist: track.artist,
+          image: track.image && track.image[track.image.length - 1],
+          listeners: Number(track.listeners) || 0,
+          type: 'track'
+        }
+      })
+      cb(null, tracks)
     },
-    error: onError
+    error: onError(cb)
   })
 }
 
@@ -85,21 +122,25 @@ exports.artistSearch = function (q, cb) {
   api.artist.search({ artist: q.trim(), limit: LIMIT }, {
     success: function (data) {
       var artists = data && data.results && data.results.artistmatches && data.results.artistmatches.artist
-      if (artists) {
-        artists = artists.map(function (artist) {
-          return {
-            name: artist.name,
-            image: artist.image && artist.image[artist.image.length - 1],
-            listeners: Number(artist.listeners) || 0,
-            type: 'artist'
-          }
-        })
-        cb(null, artists)
-      } else {
-        cb(new Error('no artists'))
+
+      if (!artists) {
+        artists = []
       }
+      if (!Array.isArray(artists)) {
+        artists = [artists]
+      }
+
+      artists = artists.map(function (artist) {
+        return {
+          name: artist.name,
+          image: artist.image && artist.image[artist.image.length - 1],
+          listeners: Number(artist.listeners) || 0,
+          type: 'artist'
+        }
+      })
+      cb(null, artists)
     },
-    error: onError
+    error: onError(cb)
   })
 }
 
@@ -107,21 +148,25 @@ exports.albumSearch = function (q, cb) {
   api.album.search({ album: q.trim(), limit: LIMIT }, {
     success: function (data) {
       var albums = data && data.results && data.results.albummatches && data.results.albummatches.album
-      if (albums) {
-        albums = albums.map(function (album) {
-          return {
-            name: album.name,
-            artist: album.artist,
-            image: album.image && album.image[album.image.length - 1],
-            type: 'album'
-          }
-        })
-        cb(null, albums)
-      } else {
-        cb(new Error('no albums'))
+
+      if (!albums) {
+        albums = []
       }
+      if (!Array.isArray(albums)) {
+        albums = [albums]
+      }
+
+      albums = albums.map(function (album) {
+        return {
+          name: album.name,
+          artist: album.artist,
+          image: album.image && album.image[album.image.length - 1],
+          type: 'album'
+        }
+      })
+      cb(null, albums)
     },
-    error: onError
+    error: onError(cb)
   })
 }
 
@@ -130,19 +175,19 @@ exports.artistInfo = function (name, cb) {
     info: function (cb) {
       api.artist.getInfo({ artist: name, autocorrect: 1, limit: 1 }, {
         success: cb.bind(undefined, null),
-        error: onError
+        error: onError(cb)
       })
     },
     tracks: function (cb) {
       api.artist.getTopTracks({ artist: name, autocorrect: 1 }, {
         success: cb.bind(undefined, null),
-        error: onError
+        error: onError(cb)
       })
     },
     albums: function (cb) {
       api.artist.getTopAlbums({ artist: name, autocorrect: 1 }, {
         success: cb.bind(undefined, null),
-        error: onError
+        error: onError(cb)
       })
     }
   }, function (err, r) {

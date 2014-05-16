@@ -9,13 +9,15 @@ window.player = undefined
 
 // Templates
 var ARTIST = fs.readFileSync(__dirname + '/../templates/artist.html', 'utf8')
+var RESULTS = fs.readFileSync(__dirname + '/../templates/results.html', 'utf8')
 
 function onError (err) {
   alert('Error: ' + err.message)
 }
 
+var view = document.querySelector('#view')
 function render (template, data) {
-  document.querySelector('#view').innerHTML = mustache.render(template, data)
+  view.innerHTML = mustache.render(template, data)
 }
 
 function updateBackground (src) {
@@ -54,6 +56,10 @@ exports.showArtist = function (name) {
 exports.showAlbum = function (info) {
   if (info.type !== 'album') throw new Error('not an album')
 
+}
+
+exports.showResults = function (results) {
+  render(RESULTS, results)
 }
 
 var $document = $(document)

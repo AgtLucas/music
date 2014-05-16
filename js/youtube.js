@@ -1,6 +1,7 @@
 var $ = require('jquery')
 var EventEmitter = require('events').EventEmitter
 var inherits = require('inherits')
+var key = require('keymaster')
 var util = require('./util')
 
 var API_TIMEOUT = 10000
@@ -69,7 +70,6 @@ function Player (videoId, node) {
     playerVars: {
       autoplay: 1,
       controls: 0,
-      disablekb: 1,
       enablejsapi: 1,
       fs: 0,
       iv_load_policy: 3,
@@ -142,6 +142,15 @@ function Player (videoId, node) {
     var time = fraction * duration
     self.yt.seekTo(time)
     setProgress(time)
+  })
+
+  key('space', function () {
+    var state = player.yt.getPlayerState()
+    if (state === YT.PlayerState.PLAYING) {
+      player.yt.pauseVideo()
+    } else if (state === YT.PlayerState.PAUSED) {
+      player.yt.playVideo()
+    }
   })
 }
 

@@ -1,0 +1,17 @@
+<div id="results">
+  <div class="tracks">
+    {{#tracks}}
+      <a class="result clearfix" href="{{ url }}">
+        <div class="left">
+          <div class="playBtn">
+            <div class="arrow"></div>
+          </div>
+        </div>
+        <div class="right">
+          <div class="name">{{ name }}</div>
+          <div class="artist">{{ artist }}</div>
+        </div>
+      </a>
+    {{/tracks}}
+  </div>
+</div>
