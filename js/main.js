@@ -41,7 +41,7 @@ function getInfoFromLocation (cb) {
   if (type && type === 'track' || type === 'artist' || type === 'album') {
     // load item
     var q = re && re[2]
-    q = decodeURIComponent(q.replace('-', ' '))
+    q = decodeURIComponent(q.replace(/-/g, ' '))
     getInfo(type, q, cb)
   } else {
     // load homepage
